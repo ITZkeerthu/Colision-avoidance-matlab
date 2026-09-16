@@ -1,0 +1,98 @@
+﻿==================================================
+ ADAPTIVE PATH PLANNING - FULL INTEGRATION DEMO
+==================================================
+pyenv : 3.12 | C:\Users\itzke\AppData\Local\Programs\Python\Python312\pythonw.exe
+pygame 2.6.1 (SDL 2.28.4, Python 3.12.0)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Python bridge OK - existing A* planner imported.
+
+
+--- MATLAB 5-scenario demo (run_planner_demo) ---
+Python environment: 3.12 (C:\Users\itzke\AppData\Local\Programs\Python\Python312\python.exe)
+matlab_bridge imported. Obstacle type codes:
+  Python dict with no properties.
+
+    {'car': 1, 'truck': 2, 'bus': 3, 'auto_rickshaw': 4, 'two_wheeler': 5, 'bicycle': 6, 'pedestrian': 7, 'pushcart': 8, 'animal': 9, 'pothole': 10}
+
+
+=== Scenario 1: Highway Cruise ===
+         scenario         collisions    min_clearance_m    replans    plan_calls    last_plan_ms    sim_time_s
+    __________________    __________    _______________    _______    __________    ____________    __________
+
+    {'Highway Cruise'}        0             6.1514            1           56           2.1795           14    
+
+
+=== Scenario 2: Two-Wheeler Blockage ===
+            scenario            collisions    min_clearance_m    replans    plan_calls    last_plan_ms    sim_time_s
+    ________________________    __________    _______________    _______    __________    ____________    __________
+
+    {'Two-Wheeler Blockage'}        0             3.4779            1           56           1.9517           14    
+
+
+=== Scenario 3: Pedestrian Crossing ===
+           scenario            collisions    min_clearance_m    replans    plan_calls    last_plan_ms    sim_time_s
+    _______________________    __________    _______________    _______    __________    ____________    __________
+
+    {'Pedestrian Crossing'}        0             0.91592           1           96           0.9332           24    
+
+
+=== Scenario 4: Rear-End Evasion ===
+          scenario          collisions    min_clearance_m    replans    plan_calls    last_plan_ms    sim_time_s
+    ____________________    __________    _______________    _______    __________    ____________    __________
+
+    {'Rear-End Evasion'}        0             13.775            0           32           0.0782           8     
+
+
+=== Scenario 5: Dense Mixed Traffic ===
+           scenario            collisions    min_clearance_m    replans    plan_calls    last_plan_ms    sim_time_s
+    _______________________    __________    _______________    _______    __________    ____________    __________
+
+    {'Dense Mixed Traffic'}        0             3.8852            1           64           3.2015           16    
+
+
+=================== SUMMARY ===================
+            scenario            collisions    min_clearance_m    replans    plan_calls    last_plan_ms    sim_time_s
+    ________________________    __________    _______________    _______    __________    ____________    __________
+
+    {'Highway Cruise'      }        0              6.1514           1           56           2.1795           14    
+    {'Two-Wheeler Blockage'}        0              3.4779           1           56           1.9517           14    
+    {'Pedestrian Crossing' }        0             0.91592           1           96           0.9332           24    
+    {'Rear-End Evasion'    }        0              13.775           0           32           0.0782            8    
+    {'Dense Mixed Traffic' }        0              3.8852           1           64           3.2015           16    
+
+Total collisions across all scenarios: 0
+
+Figures saved: planner_demo_scenarios.png, planner_demo_replan.png
+
+--- Simulink validation (run_simulink_demo) ---
+Simulating adaptive_path_planning (calls Python A* via Simulink)...
+Simulation done in 19.0 s (wall).
+
+================ SIMULINK VALIDATION ================
+  collision_count       : 0
+  minimum_clearance     : 37.99 px (3.80 m)
+  number_of_replans     : 8
+  path_length           : 33.1 m
+  mean planning_time    : 2.51 ms
+  simulation_time       : 20.0 s
+  EGO final x           : 2135 px (start 300, goal 2500)
+  max step displacement : 2.50 px (phys. limit 2.50 px @125px/s)
+  no reverse jumps      : 1
+  OVERALL               : PASS
+Figure saved: simulink_validation.png
+
+Simulink model open. Starting a live 20 s run so the Display blocks and Scope update...
+
+======================================================
+ MATLAB demo          : OK
+ Simulink validation  : PASS
+ Simulink model       : open in editor, run started
+ Pygame app           : launched by run_everything.bat
+======================================================
+matlab.exe : ERROR: MATLAB error Exit Status: 0x00000001
+At line:1 char:349
++ ... Path=$null; & "C:\Program Files\MATLAB\R2026a\bin\matlab.exe" -batch  ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: MATLAB e...tus: 0x00000001:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
