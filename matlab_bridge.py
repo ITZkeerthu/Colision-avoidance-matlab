@@ -103,6 +103,8 @@ def _norm_obstacle(obs) -> Optional[_ObstacleStub]:
     # Numeric Simulink codes allowed in place of names.  Code 0 / unknown =
     # empty slot in the fixed-size Simulink obstacle matrix -> ignored.
     if isinstance(etype, (int, float)):
+        if not math.isfinite(etype):
+            return None
         etype = CODE_TO_TYPE.get(int(etype))
         if etype is None:
             return None
@@ -111,7 +113,15 @@ def _norm_obstacle(obs) -> Optional[_ObstacleStub]:
         return None
     if etype not in OBSTACLE_SIZES:
         etype = 'car'
-    return _ObstacleStub(etype, x, y, v, hdg)
+    # Malformed / non-finite rows (e.g. NaN from an unconnected Simulink
+    # signal) are treated as empty slots rather than crashing the planner.
+    try:
+        vals = [float(x), float(y), float(v), float(hdg)]
+    except (TypeError, ValueError):
+        return None
+    if not all(math.isfinite(f) for f in vals):
+        return None
+    return _ObstacleStub(etype, *vals)
 
 
 class _PlannerSession:

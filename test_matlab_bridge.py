@@ -173,6 +173,13 @@ for t in ('car', 'truck', 'bus', 'auto_rickshaw', 'two_wheeler', 'bicycle',
 n = mb.update_obstacles([[1, 900, 1000, 10, 0.0], [10, 950, 1050, 0, 0.0]])
 check("numeric type codes (Simulink matrix form)", n == 2)
 
+# malformed rows are ignored, never raise
+nan = float('nan')
+n = mb.update_obstacles([[nan, 1, 1, 0, 0], [1, nan, 1, 0, 0],
+                         {'type': 'car', 'x': 'abc', 'y': 0},
+                         {'type': 'car', 'x': 5, 'y': 5, 'velocity': 0, 'heading': 0}])
+check("malformed/NaN obstacle rows ignored", n == 1, f"n={n}")
+
 print()
 print("=" * 70)
 print("TEST 7 - metrics surface complete (STEP 7 fields)")
