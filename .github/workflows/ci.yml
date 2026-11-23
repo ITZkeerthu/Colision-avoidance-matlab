@@ -17,5 +17,6 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
-      - run: python -m py_compile main2_collision_free.py matlab_bridge.py test_matlab_bridge.py
+      - run: python -m py_compile main2_collision_free.py matlab_bridge.py test_matlab_bridge.py test_obstacle_normalization.py
       - run: python test_matlab_bridge.py
+      - run: python test_obstacle_normalization.py
