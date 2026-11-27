@@ -180,6 +180,20 @@ n = mb.update_obstacles([[nan, 1, 1, 0, 0], [1, nan, 1, 0, 0],
                          {'type': 'car', 'x': 5, 'y': 5, 'velocity': 0, 'heading': 0}])
 check("malformed/NaN obstacle rows ignored", n == 1, f"n={n}")
 
+# non-finite scalar inputs are rejected loudly, not silently propagated
+for label, call in (
+        ("set_goal(NaN)", lambda: mb.set_goal(nan, 5)),
+        ("plan_path(inf)", lambda: mb.plan_path(float('inf'), 0)),
+        ("ego_step(NaN)", lambda: mb.ego_step(nan, 0, 0, 0)),
+        ("safety_check(NaN)", lambda: mb.safety_check(0, nan)),
+        ("set_goal('abc')", lambda: mb.set_goal('abc', 1))):
+    try:
+        call()
+        rejected = False
+    except ValueError:
+        rejected = True
+    check(f"{label} raises ValueError", rejected)
+
 print()
 print("=" * 70)
 print("TEST 7 - metrics surface complete (STEP 7 fields)")

@@ -64,6 +64,22 @@ STATE_CODES = {'IDLE': 0, 'CRUISING': 1, 'AVOIDING': 2,
 EGO_RADIUS = 23.0                    # same value used by PathPlanner defaults
 
 
+def _finite(name: str, *values) -> tuple:
+    """Coerce values to float and reject NaN/Inf (e.g. an unconnected
+    Simulink signal) with a clear ValueError instead of silently propagating
+    them into the planner or clamping them to a world edge."""
+    out = []
+    for v in values:
+        try:
+            f = float(v)
+        except (TypeError, ValueError):
+            raise ValueError(f'{name} must be numeric, got {v!r}') from None
+        if not math.isfinite(f):
+            raise ValueError(f'{name} must be finite, got {f}')
+        out.append(f)
+    return tuple(out)
+
+
 class _ObstacleStub:
     """
     Duck-typed stand-in for sim.Entity, exposing exactly the attributes the
@@ -378,8 +394,9 @@ def initialize_planner(road_filter: str = "", pothole_density: float = 0.0):
 
 
 def set_goal(gx: float, gy: float) -> bool:
+    gx, gy = _finite('goal', gx, gy)
     p = _SESSION.require()
-    p.set_goal(float(gx), float(gy))
+    p.set_goal(gx, gy)
     _SESSION.goal = p.goal
     _SESSION._prev_state = 'IDLE'
     return True
@@ -390,6 +407,7 @@ def update_obstacles(obstacles) -> int:
 
 
 def plan_path(ego_x: float, ego_y: float, ego_heading: float = 0.0):
+    _finite('ego position/heading', ego_x, ego_y, ego_heading)
     _SESSION._now += 1.0                 # advance the internal planner clock
     return _SESSION.plan_path(ego_x, ego_y, ego_heading)
 
@@ -421,10 +439,14 @@ def get_planner_status():
 
 
 def ego_step(x, y, v, heading, dt=1.0 / 60.0, max_speed=None):
+    _finite('ego state', x, y, v, heading, dt)
+    if max_speed is not None:
+        _finite('max_speed', max_speed)
     return _SESSION.ego_step(x, y, v, heading, dt, max_speed)
 
 
 def safety_check(x, y):
+    x, y = _finite('position', x, y)
     min_clear = float('inf')
     nearest = ''
     for e in _SESSION.obstacles:
